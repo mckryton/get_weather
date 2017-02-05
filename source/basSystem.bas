@@ -9,6 +9,16 @@ Attribute VB_Name = "basSystem"
 
 'Options
 Option Explicit
+
+'log level (range is 1 to 100)
+Global Const cLogDebug = 100
+Global Const cLogInfo = 90
+Global Const cLogWarning = 50
+Global Const cLogError = 30
+Global Const cLogCritical = 1
+
+'current log level - decreasing log level means decreasing amount of messages
+Global Const cCurrentLogLevel = 100
 '-------------------------------------------------------------
 ' Description   : checks if item exists in a collection object
 ' Parameter     : pvarKey           - item name
@@ -106,4 +116,44 @@ Public Sub log_error(pstrFunctionName As String, Optional pstrLogMsg As Variant)
     Application.ScreenUpdating = True
     Application.Cursor = xlDefault
 End Sub
+'-------------------------------------------------------------
+' Description   : save source code as text files
+'-------------------------------------------------------------
+Private Sub exportCode()
 
+    Dim vcomSource As VBComponent
+    Dim strPath As String
+    Dim strSeparator As String
+    Dim strSuffix As String
+
+    On Error GoTo error_handler
+    #If MAC_OFFICE_VERSION >= 15 Then
+        'in Office 2016 MAC M$ switched to / as path separator
+        strSeparator = "/"
+    #ElseIf Mac Then
+        strSeparator = ":"
+    #Else
+        strSeparator = "\"
+    #End If
+    strPath = ThisWorkbook.Path & strSeparator & "source"
+    For Each vcomSource In Application.VBE.VBProjects("get_weather").VBComponents
+        Select Case vcomSource.Type
+            Case vbext_ct_StdModule
+                strSuffix = "bas"
+            Case vbext_ct_ClassModule
+                strSuffix = "cls"
+            Case vbext_ct_Document
+                strSuffix = "cls"
+            Case vbext_ct_MSForm
+                strSuffix = "frm"
+            Case Else
+                strSuffix = "txt"
+        End Select
+        vcomSource.Export strPath & strSeparator & vcomSource.Name & "." & strSuffix
+        basSystem.log "export code to " & strPath & strSeparator & vcomSource.Name & "." & strSuffix
+    Next
+    Exit Sub
+
+error_handler:
+    basSystem.log_error "basSystem.exportCode"
+End Sub

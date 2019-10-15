@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="2.9" jmeter="3.0 r1743807">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.1.1 r1855137">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Testplan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -58,14 +58,14 @@
               </elementProp>
               <elementProp name="begin" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">2016-09-26T00:00:00</stringProp>
+                <stringProp name="Argument.value">${__timeShift(yyyy-MM-dd&apos;T&apos;hh:mm:ss,,P1D,,)}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.name">begin</stringProp>
               </elementProp>
               <elementProp name="end" elementType="HTTPArgument">
                 <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                <stringProp name="Argument.value">2016-09-30T00:00:00</stringProp>
+                <stringProp name="Argument.value">${__timeShift(yyyy-MM-dd&apos;T&apos;hh:mm:ss,,P5D,,)}</stringProp>
                 <stringProp name="Argument.metadata">=</stringProp>
                 <boolProp name="HTTPArgument.use_equals">true</boolProp>
                 <stringProp name="Argument.name">end</stringProp>
@@ -95,9 +95,7 @@
           </elementProp>
           <stringProp name="HTTPSampler.domain">graphical.weather.gov</stringProp>
           <stringProp name="HTTPSampler.port"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          <stringProp name="HTTPSampler.protocol"></stringProp>
+          <stringProp name="HTTPSampler.protocol">https</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
           <stringProp name="HTTPSampler.path">/xml/sample_products/browser_interface/ndfdXMLclient.php</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
@@ -105,8 +103,10 @@
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <boolProp name="HTTPSampler.monitor">false</boolProp>
           <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+          <stringProp name="TestPlan.comments">2019-10-15T00:00:00</stringProp>
         </HTTPSamplerProxy>
         <hashTree>
           <XPathExtractor guiclass="XPathExtractorGui" testclass="XPathExtractor" testname="temperature" enabled="true">
@@ -117,9 +117,10 @@
             <boolProp name="XPathExtractor.tolerant">false</boolProp>
             <boolProp name="XPathExtractor.namespace">false</boolProp>
             <stringProp name="Scope.variable">temp_max</stringProp>
+            <stringProp name="XPathExtractor.matchNumber">-1</stringProp>
           </XPathExtractor>
           <hashTree/>
-          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="false">
             <stringProp name="filename"></stringProp>
             <stringProp name="parameters"></stringProp>
             <boolProp name="resetInterpreter">false</boolProp>
@@ -129,7 +130,7 @@
 
  // pass true if want to append to existing file  
  // if want to overwrite, then don&apos;t pass the second argument
- FileWriter fstream = new FileWriter(&quot;/Users/mac/Desktop/jmeter-values.csv&quot;, true);
+ FileWriter fstream = new FileWriter(&quot;/tmp/jmeter-values.csv&quot;, true);
  BufferedWriter out = new BufferedWriter(fstream);
  temp_list = &quot;&quot;;
  for(int temp_count=1; temp_count&lt;=match_count; temp_count++)
@@ -148,39 +149,6 @@
           <boolProp name="displayJMeterVariables">true</boolProp>
           <boolProp name="displaySystemProperties">false</boolProp>
         </DebugSampler>
-        <hashTree/>
-        <ResultCollector guiclass="SimpleDataWriter" testclass="ResultCollector" testname="Simple Data Writer" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>false</time>
-              <latency>false</latency>
-              <timestamp>false</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>false</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>true</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>true</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <url>true</url>
-              <sampleCount>true</sampleCount>
-            </value>
-          </objProp>
-          <stringProp name="filename">/Users/mac/Desktop/jmeter-results.xml</stringProp>
-        </ResultCollector>
         <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -244,7 +212,7 @@
               <assertionsResultsToSave>0</assertionsResultsToSave>
             </value>
           </objProp>
-          <stringProp name="filename">/Users/mac/Desktop/jmeter-results.xml</stringProp>
+          <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
